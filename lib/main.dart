@@ -11,6 +11,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
   WindowOptions windowOptions = WindowOptions(
+    minimumSize: Size(1024, 600),
+    maximumSize: Size(1920, 1080),
     size: Size(1024, 600),
     title: 'Totem',
     center: true,
