@@ -1,4 +1,3 @@
-// lib/features/home/presentation/widgets/widgets/rss_widget.dart
 import 'package:flutter/material.dart';
 import 'package:totem/features/home/domain/models/rss_feed.dart';
 
