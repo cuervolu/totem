@@ -5,8 +5,23 @@ import 'package:calendar_view/calendar_view.dart';
 import 'package:totem/core/router/app_router.dart';
 import 'package:totem/core/theme/theme.dart';
 import 'package:totem/core/connectivity/connectivity_cubit.dart';
+import 'package:window_manager/window_manager.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
+  WindowOptions windowOptions = WindowOptions(
+    size: Size(1024, 600),
+    title: 'Totem',
+    center: true,
+    backgroundColor: Colors.transparent,
+    skipTaskbar: false,
+    titleBarStyle: TitleBarStyle.hidden,
+  );
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
   runApp(const TotemApp());
 }
 
