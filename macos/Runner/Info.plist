@@ -28,5 +28,7 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Totem necesita acceso a la ubicación para mostrar el clima local.</string>
 </dict>
 </plist>
