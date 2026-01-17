@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:totem/core/connectivity/connectivity_cubit.dart';
 import 'package:totem/core/connectivity/connectivity_manager.dart';
+import 'package:totem/core/location/services/location_detector_service.dart';
 import 'package:totem/core/location/services/nominatim_service.dart';
 import 'package:totem/core/router/app_router.dart';
 import 'package:logger/logger.dart';
@@ -48,4 +49,12 @@ Future<void> setupDependencies() async {
 
   // Router
   getIt.registerLazySingleton<GoRouter>(() => createAppRouter());
+
+  // LocationDetector
+  getIt.registerLazySingleton<LocationDetectorService>(
+    () => LocationDetectorService(
+      logger: getIt<Logger>(),
+      nominatim: getIt<NominatimService>(),
+    ),
+  );
 }
