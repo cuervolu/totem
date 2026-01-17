@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:calendar_view/calendar_view.dart';
+import 'package:totem/core/utils/platform_utils.dart';
 
 class CalendarWidget extends StatelessWidget {
   final VoidCallback onClick;
@@ -13,18 +14,21 @@ class CalendarWidget extends StatelessWidget {
     final now = DateTime.now();
     final monthName = _getSpanishMonth(now.month);
 
-    // Eventos de ejemplo
     final upcomingEvents = [
       _EventData(day: '15', title: 'Reunión equipo', time: '10:00'),
       _EventData(day: '18', title: 'Dentista', time: '15:30'),
     ];
+
+    final eventsToShow = isMobile
+        ? upcomingEvents.take(1)
+        : upcomingEvents.take(2);
 
     return InkWell(
       onTap: onClick,
       borderRadius: BorderRadius.circular(16),
       child: Container(
         height: height,
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(isMobile ? 16 : 20),
         decoration: BoxDecoration(
           color: theme.colorScheme.primary,
           borderRadius: BorderRadius.circular(16),
@@ -48,7 +52,7 @@ class CalendarWidget extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: isMobile ? 8 : 12),
             _buildWeekDays(theme),
             const SizedBox(height: 4),
             Expanded(
@@ -74,10 +78,10 @@ class CalendarWidget extends StatelessWidget {
                     },
               ),
             ),
-            const SizedBox(height: 12),
-            ...upcomingEvents.map(
+            SizedBox(height: isMobile ? 6 : 12),
+            ...eventsToShow.map(
               (event) => Padding(
-                padding: const EdgeInsets.only(bottom: 6),
+                padding: EdgeInsets.only(bottom: isMobile ? 4 : 6),
                 child: _buildEvent(event, theme),
               ),
             ),
