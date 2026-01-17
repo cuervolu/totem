@@ -4,7 +4,7 @@ import 'package:totem/features/calendar/presentation/pages/calendar_detail_page.
 import 'package:totem/features/weather/presentation/pages/weather_detail_page.dart';
 import 'package:totem/features/rss/presentation/pages/rss_detail_page.dart';
 
-final appRouter = GoRouter(
+GoRouter createAppRouter() => GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(

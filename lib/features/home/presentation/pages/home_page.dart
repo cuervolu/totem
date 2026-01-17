@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:totem/core/di/injection.dart';
 import 'package:totem/core/utils/platform_utils.dart';
 import 'package:totem/core/connectivity/connectivity_cubit.dart';
 import 'package:totem/core/connectivity/connectivity_manager.dart';
@@ -15,7 +16,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _connectivityManager = ConnectivityManager();
+   late final ConnectivityManager _connectivityManager;
+
+
+ @override
+  void initState() {
+    super.initState();
+    _connectivityManager = getIt<ConnectivityManager>();
+  }
 
   @override
   void dispose() {

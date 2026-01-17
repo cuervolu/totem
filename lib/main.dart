@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:toastification/toastification.dart';
 import 'package:calendar_view/calendar_view.dart';
-import 'package:totem/core/router/app_router.dart';
+import 'package:totem/core/di/injection.dart';
 import 'package:totem/core/theme/theme.dart';
 import 'package:totem/core/connectivity/connectivity_cubit.dart';
 import 'package:totem/core/utils/platform_utils.dart';
@@ -10,6 +11,8 @@ import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await setupDependencies();
 
   if (isDesktop) {
     await setupWindowManager();
@@ -41,17 +44,17 @@ class TotemApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ConnectivityCubit(),
+    return BlocProvider.value(
+      value: getIt<ConnectivityCubit>(),
       child: ToastificationWrapper(
         child: CalendarControllerProvider(
-          controller: EventController(),
+          controller: getIt<EventController>(),
           child: MaterialApp.router(
             title: 'Totem',
             theme: lightTheme,
             darkTheme: darkTheme,
             themeMode: ThemeMode.system,
-            routerConfig: appRouter,
+            routerConfig: getIt<GoRouter>(), 
             debugShowCheckedModeBanner: false,
           ),
         ),
