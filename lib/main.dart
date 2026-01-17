@@ -5,10 +5,20 @@ import 'package:calendar_view/calendar_view.dart';
 import 'package:totem/core/router/app_router.dart';
 import 'package:totem/core/theme/theme.dart';
 import 'package:totem/core/connectivity/connectivity_cubit.dart';
+import 'package:totem/core/utils/platform_utils.dart';
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  if (isDesktop) {
+    await setupWindowManager();
+  }
+
+  runApp(const TotemApp());
+}
+
+Future<void> setupWindowManager() async {
   await windowManager.ensureInitialized();
   WindowOptions windowOptions = WindowOptions(
     minimumSize: Size(1024, 600),
@@ -24,7 +34,6 @@ void main() async {
     await windowManager.show();
     await windowManager.focus();
   });
-  runApp(const TotemApp());
 }
 
 class TotemApp extends StatelessWidget {
