@@ -10,6 +10,15 @@
       "toolArgs": ["--verbose"]
     },
     {
+      "name": "Totem (Debug + Reset Onboarding)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "debug",
+      "args": ["--dart-define=RESET_ONBOARDING=true"],
+      "toolArgs": ["--verbose"]
+    },
+    {
       "name": "Totem (Release)",
       "request": "launch",
       "type": "dart",

@@ -8,6 +8,8 @@ import 'package:totem/core/connectivity/connectivity_cubit.dart';
 import 'package:totem/core/location/presentation/location_cubit.dart';
 import 'package:totem/core/services/preferences_service.dart';
 import 'package:totem/features/onboarding/presentation/cubit/cubit.dart';
+import 'package:totem/features/onboarding/presentation/widgets/progress_indicator.dart';
+import 'package:totem/features/onboarding/presentation/widgets/stage_configuration.dart';
 import 'package:totem/features/onboarding/presentation/widgets/widgets.dart';
 
 class OnboardingPage extends StatelessWidget {
@@ -63,13 +65,19 @@ class _OnboardingView extends StatelessWidget {
   }
 
   Widget _buildStage(BuildContext context, OnboardingInProgress state) {
-    return switch (state.stage) {
-      OnboardingStage.welcome => const StageWelcome(),
-      OnboardingStage.identity => const StageIdentity(),
-      OnboardingStage.features => const StageFeatures(),
-      OnboardingStage.connectivity => const StageConnectivity(),
-      OnboardingStage.location => const StageLocation(),
-      OnboardingStage.ready => const StageReady(),
-    };
+    return Column(
+      children: [
+        const SizedBox(height: 24),
+        OnboardingProgressIndicator(currentStage: state.stage),
+        const SizedBox(height: 8),
+        Expanded(
+          child: switch (state.stage) {
+            OnboardingStage.welcome => const StageWelcome(),
+            OnboardingStage.configuration => const StageConfiguration(),
+            OnboardingStage.ready => const StageReady(),
+          },
+        ),
+      ],
+    );
   }
 }

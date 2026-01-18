@@ -36,9 +36,6 @@ class OnboardingCubit extends Cubit<OnboardingState> {
         emit(current.copyWith(hasInternet: isConnected));
       }
     });
-
-    await Future.delayed(const Duration(seconds: 3));
-    nextStage();
   }
 
   void nextStage() {
@@ -46,11 +43,8 @@ class OnboardingCubit extends Cubit<OnboardingState> {
     if (current is! OnboardingInProgress) return;
 
     final nextStage = switch (current.stage) {
-      OnboardingStage.welcome => OnboardingStage.identity,
-      OnboardingStage.identity => OnboardingStage.features,
-      OnboardingStage.features => OnboardingStage.connectivity,
-      OnboardingStage.connectivity => OnboardingStage.location,
-      OnboardingStage.location => OnboardingStage.ready,
+      OnboardingStage.welcome => OnboardingStage.configuration,
+      OnboardingStage.configuration => OnboardingStage.ready,
       OnboardingStage.ready => null,
     };
 
@@ -76,15 +70,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
 
   void skipLocationConfiguration() {
     _logger.w('User skipped location configuration');
-    final current = state;
-    if (current is OnboardingInProgress) {
-      emit(
-        current.copyWith(
-          stage: OnboardingStage.ready,
-          locationConfigured: false,
-        ),
-      );
-    }
+    nextStage();
   }
 
   Future<void> complete() async {

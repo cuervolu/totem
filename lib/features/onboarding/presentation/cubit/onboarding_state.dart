@@ -1,12 +1,8 @@
 enum OnboardingStage {
   welcome,
-  identity,
-  features,
-  connectivity,
-  location,
+  configuration, 
   ready,
 }
-
 sealed class OnboardingState {}
 
 class OnboardingInitial extends OnboardingState {}

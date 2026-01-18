@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:toastification/toastification.dart';
 import 'package:calendar_view/calendar_view.dart';
 import 'package:totem/core/di/injection.dart';
+import 'package:totem/core/services/preferences_service.dart';
 import 'package:totem/core/theme/theme.dart';
 import 'package:totem/core/connectivity/connectivity_cubit.dart';
 import 'package:totem/core/utils/platform_utils.dart';
@@ -13,6 +14,14 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await setupDependencies();
+
+  const resetOnboarding = bool.fromEnvironment(
+    'RESET_ONBOARDING',
+    defaultValue: false,
+  );
+  if (resetOnboarding) {
+    await getIt<PreferencesService>().setOnboardingCompleted(false);
+  }
 
   if (isDesktop) {
     await setupWindowManager();
