@@ -1,0 +1,101 @@
+import 'dart:async';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
+import 'package:totem/core/connectivity/connectivity_cubit.dart';
+import 'package:totem/core/services/preferences_service.dart';
+import 'package:totem/features/onboarding/presentation/cubit/onboarding_state.dart';
+
+class OnboardingCubit extends Cubit<OnboardingState> {
+  final ConnectivityCubit _connectivityCubit;
+  final PreferencesService _prefs;
+  final Logger _logger;
+  StreamSubscription? _connectivitySubscription;
+
+  OnboardingCubit({
+    required ConnectivityCubit connectivityCubit,
+    required PreferencesService prefs,
+    required Logger logger,
+  }) : _connectivityCubit = connectivityCubit,
+       _prefs = prefs,
+       _logger = logger,
+       super(OnboardingInitial());
+
+  Future<void> start() async {
+    final hasInternet = _connectivityCubit.state;
+
+    emit(
+      OnboardingInProgress(
+        stage: OnboardingStage.welcome,
+        hasInternet: hasInternet,
+      ),
+    );
+
+    _connectivitySubscription = _connectivityCubit.stream.listen((isConnected) {
+      final current = state;
+      if (current is OnboardingInProgress) {
+        emit(current.copyWith(hasInternet: isConnected));
+      }
+    });
+
+    await Future.delayed(const Duration(seconds: 3));
+    nextStage();
+  }
+
+  void nextStage() {
+    final current = state;
+    if (current is! OnboardingInProgress) return;
+
+    final nextStage = switch (current.stage) {
+      OnboardingStage.welcome => OnboardingStage.identity,
+      OnboardingStage.identity => OnboardingStage.features,
+      OnboardingStage.features => OnboardingStage.connectivity,
+      OnboardingStage.connectivity => OnboardingStage.location,
+      OnboardingStage.location => OnboardingStage.ready,
+      OnboardingStage.ready => null,
+    };
+
+    if (nextStage != null) {
+      emit(current.copyWith(stage: nextStage));
+    }
+  }
+
+  void setMascotName(String name) {
+    final current = state;
+    if (current is OnboardingInProgress) {
+      emit(current.copyWith(mascotName: name.trim()));
+    }
+  }
+
+  void markLocationConfigured() {
+    final current = state;
+    if (current is OnboardingInProgress) {
+      _logger.d('Location configured during onboarding');
+      emit(current.copyWith(locationConfigured: true));
+    }
+  }
+
+  void skipLocationConfiguration() {
+    _logger.w('User skipped location configuration');
+    final current = state;
+    if (current is OnboardingInProgress) {
+      emit(
+        current.copyWith(
+          stage: OnboardingStage.ready,
+          locationConfigured: false,
+        ),
+      );
+    }
+  }
+
+  Future<void> complete() async {
+    await _prefs.setOnboardingCompleted(true);
+    _logger.i('Onboarding completed');
+    emit(OnboardingComplete());
+  }
+
+  @override
+  Future<void> close() {
+    _connectivitySubscription?.cancel();
+    return super.close();
+  }
+}

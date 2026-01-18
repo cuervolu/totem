@@ -10,6 +10,8 @@ class PreferencesService {
   static const _keyUserLocation = 'user_location';
   static const _keyThemeMode = 'theme_mode';
   static const _keyNominatimCache = 'nominatim_cache_';
+  static const _keyOnboardingCompleted = 'onboarding_completed';
+
   static const _cacheDuration = Duration(hours: 24);
 
   PreferencesService(this._prefs);
@@ -45,6 +47,14 @@ class PreferencesService {
       (mode) => mode.name == value,
       orElse: () => ThemeMode.system,
     );
+  }
+
+  Future<void> setOnboardingCompleted(bool value) async {
+    await _prefs.setBool(_keyOnboardingCompleted, value);
+  }
+
+  bool isOnboardingCompleted() {
+    return _prefs.getBool(_keyOnboardingCompleted) ?? false;
   }
 
   Future<void> cacheNominatimSearch(
