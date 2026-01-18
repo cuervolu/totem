@@ -7,14 +7,8 @@ import 'package:totem/core/di/injection.dart';
 import 'package:totem/core/connectivity/connectivity_cubit.dart';
 import 'package:totem/core/location/presentation/location_cubit.dart';
 import 'package:totem/core/services/preferences_service.dart';
-import 'package:totem/features/onboarding/presentation/cubit/onboarding_cubit.dart';
-import 'package:totem/features/onboarding/presentation/cubit/onboarding_state.dart';
-import 'package:totem/features/onboarding/presentation/widgets/stage_welcome.dart';
-import 'package:totem/features/onboarding/presentation/widgets/stage_identity.dart';
-import 'package:totem/features/onboarding/presentation/widgets/stage_features.dart';
-import 'package:totem/features/onboarding/presentation/widgets/stage_connectivity.dart';
-import 'package:totem/features/onboarding/presentation/widgets/stage_location.dart';
-import 'package:totem/features/onboarding/presentation/widgets/stage_ready.dart';
+import 'package:totem/features/onboarding/presentation/cubit/cubit.dart';
+import 'package:totem/features/onboarding/presentation/widgets/widgets.dart';
 
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
