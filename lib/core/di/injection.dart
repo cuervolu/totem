@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:totem/core/connectivity/connectivity_cubit.dart';
 import 'package:totem/core/connectivity/connectivity_manager.dart';
+import 'package:totem/core/database/database.dart';
 import 'package:totem/core/location/presentation/location_cubit.dart';
 import 'package:totem/core/location/services/location_detector_service.dart';
 import 'package:totem/core/location/services/nominatim_service.dart';
@@ -29,6 +30,18 @@ Future<void> setupDependencies() async {
         dateTimeFormat: DateTimeFormat.none,
       ),
     ),
+  );
+
+  getIt.registerLazySingleton<TotemDatabase>(() => TotemDatabase());
+
+  getIt.registerLazySingleton<WeatherDao>(
+    () => getIt<TotemDatabase>().weatherDao,
+  );
+
+  getIt.registerLazySingleton<RssDao>(() => getIt<TotemDatabase>().rssDao);
+
+  getIt.registerLazySingleton<CalendarDao>(
+    () => getIt<TotemDatabase>().calendarDao,
   );
 
   // PreferencesService
