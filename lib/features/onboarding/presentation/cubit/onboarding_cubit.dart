@@ -2,21 +2,25 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:totem/core/connectivity/connectivity_cubit.dart';
+import 'package:totem/core/database/database.dart';
 import 'package:totem/core/services/preferences_service.dart';
 import 'package:totem/features/onboarding/presentation/cubit/onboarding_state.dart';
 
 class OnboardingCubit extends Cubit<OnboardingState> {
   final ConnectivityCubit _connectivityCubit;
   final PreferencesService _prefs;
+   final TotemDatabase _db;
   final Logger _logger;
   StreamSubscription? _connectivitySubscription;
 
   OnboardingCubit({
     required ConnectivityCubit connectivityCubit,
     required PreferencesService prefs,
+     required TotemDatabase database,
     required Logger logger,
   }) : _connectivityCubit = connectivityCubit,
        _prefs = prefs,
+        _db = database,
        _logger = logger,
        super(OnboardingInitial());
 
@@ -74,6 +78,16 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   }
 
   Future<void> complete() async {
+    final current = state;
+    if (current is OnboardingInProgress && current.mascotName != null) {
+      try {
+        await _db.mascotDao.createMascot(current.mascotName!);
+        _logger.i('Mascot created: ${current.mascotName}');
+      } catch (e) {
+        _logger.e('Failed to save mascot', error: e);
+      }
+    }
+
     await _prefs.setOnboardingCompleted(true);
     _logger.i('Onboarding completed');
     emit(OnboardingComplete());

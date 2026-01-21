@@ -2297,6 +2297,256 @@ class CalendarEventsCompanion extends UpdateCompanion<CalendarEvent> {
   }
 }
 
+class $MascotProfileTable extends MascotProfile
+    with TableInfo<$MascotProfileTable, MascotProfileData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MascotProfileTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _birthDateMeta = const VerificationMeta(
+    'birthDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> birthDate = GeneratedColumn<DateTime>(
+    'birth_date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, name, birthDate];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'mascot_profile';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<MascotProfileData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('birth_date')) {
+      context.handle(
+        _birthDateMeta,
+        birthDate.isAcceptableOrUnknown(data['birth_date']!, _birthDateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_birthDateMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  MascotProfileData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MascotProfileData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      birthDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}birth_date'],
+      )!,
+    );
+  }
+
+  @override
+  $MascotProfileTable createAlias(String alias) {
+    return $MascotProfileTable(attachedDatabase, alias);
+  }
+}
+
+class MascotProfileData extends DataClass
+    implements Insertable<MascotProfileData> {
+  final int id;
+  final String name;
+  final DateTime birthDate;
+  const MascotProfileData({
+    required this.id,
+    required this.name,
+    required this.birthDate,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    map['birth_date'] = Variable<DateTime>(birthDate);
+    return map;
+  }
+
+  MascotProfileCompanion toCompanion(bool nullToAbsent) {
+    return MascotProfileCompanion(
+      id: Value(id),
+      name: Value(name),
+      birthDate: Value(birthDate),
+    );
+  }
+
+  factory MascotProfileData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MascotProfileData(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      birthDate: serializer.fromJson<DateTime>(json['birthDate']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'birthDate': serializer.toJson<DateTime>(birthDate),
+    };
+  }
+
+  MascotProfileData copyWith({int? id, String? name, DateTime? birthDate}) =>
+      MascotProfileData(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        birthDate: birthDate ?? this.birthDate,
+      );
+  MascotProfileData copyWithCompanion(MascotProfileCompanion data) {
+    return MascotProfileData(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      birthDate: data.birthDate.present ? data.birthDate.value : this.birthDate,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MascotProfileData(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('birthDate: $birthDate')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, name, birthDate);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MascotProfileData &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.birthDate == this.birthDate);
+}
+
+class MascotProfileCompanion extends UpdateCompanion<MascotProfileData> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<DateTime> birthDate;
+  const MascotProfileCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.birthDate = const Value.absent(),
+  });
+  MascotProfileCompanion.insert({
+    this.id = const Value.absent(),
+    required String name,
+    required DateTime birthDate,
+  }) : name = Value(name),
+       birthDate = Value(birthDate);
+  static Insertable<MascotProfileData> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<DateTime>? birthDate,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (birthDate != null) 'birth_date': birthDate,
+    });
+  }
+
+  MascotProfileCompanion copyWith({
+    Value<int>? id,
+    Value<String>? name,
+    Value<DateTime>? birthDate,
+  }) {
+    return MascotProfileCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      birthDate: birthDate ?? this.birthDate,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (birthDate.present) {
+      map['birth_date'] = Variable<DateTime>(birthDate.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MascotProfileCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('birthDate: $birthDate')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$TotemDatabase extends GeneratedDatabase {
   _$TotemDatabase(QueryExecutor e) : super(e);
   $TotemDatabaseManager get managers => $TotemDatabaseManager(this);
@@ -2306,9 +2556,11 @@ abstract class _$TotemDatabase extends GeneratedDatabase {
   );
   late final $RssFeedItemsTable rssFeedItems = $RssFeedItemsTable(this);
   late final $CalendarEventsTable calendarEvents = $CalendarEventsTable(this);
+  late final $MascotProfileTable mascotProfile = $MascotProfileTable(this);
   late final WeatherDao weatherDao = WeatherDao(this as TotemDatabase);
   late final RssDao rssDao = RssDao(this as TotemDatabase);
   late final CalendarDao calendarDao = CalendarDao(this as TotemDatabase);
+  late final MascotDao mascotDao = MascotDao(this as TotemDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2318,6 +2570,7 @@ abstract class _$TotemDatabase extends GeneratedDatabase {
     weatherForecast,
     rssFeedItems,
     calendarEvents,
+    mascotProfile,
   ];
 }
 
@@ -3460,6 +3713,168 @@ typedef $$CalendarEventsTableProcessedTableManager =
       CalendarEvent,
       PrefetchHooks Function()
     >;
+typedef $$MascotProfileTableCreateCompanionBuilder =
+    MascotProfileCompanion Function({
+      Value<int> id,
+      required String name,
+      required DateTime birthDate,
+    });
+typedef $$MascotProfileTableUpdateCompanionBuilder =
+    MascotProfileCompanion Function({
+      Value<int> id,
+      Value<String> name,
+      Value<DateTime> birthDate,
+    });
+
+class $$MascotProfileTableFilterComposer
+    extends Composer<_$TotemDatabase, $MascotProfileTable> {
+  $$MascotProfileTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get birthDate => $composableBuilder(
+    column: $table.birthDate,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$MascotProfileTableOrderingComposer
+    extends Composer<_$TotemDatabase, $MascotProfileTable> {
+  $$MascotProfileTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get birthDate => $composableBuilder(
+    column: $table.birthDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$MascotProfileTableAnnotationComposer
+    extends Composer<_$TotemDatabase, $MascotProfileTable> {
+  $$MascotProfileTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get birthDate =>
+      $composableBuilder(column: $table.birthDate, builder: (column) => column);
+}
+
+class $$MascotProfileTableTableManager
+    extends
+        RootTableManager<
+          _$TotemDatabase,
+          $MascotProfileTable,
+          MascotProfileData,
+          $$MascotProfileTableFilterComposer,
+          $$MascotProfileTableOrderingComposer,
+          $$MascotProfileTableAnnotationComposer,
+          $$MascotProfileTableCreateCompanionBuilder,
+          $$MascotProfileTableUpdateCompanionBuilder,
+          (
+            MascotProfileData,
+            BaseReferences<
+              _$TotemDatabase,
+              $MascotProfileTable,
+              MascotProfileData
+            >,
+          ),
+          MascotProfileData,
+          PrefetchHooks Function()
+        > {
+  $$MascotProfileTableTableManager(
+    _$TotemDatabase db,
+    $MascotProfileTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$MascotProfileTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$MascotProfileTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$MascotProfileTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<DateTime> birthDate = const Value.absent(),
+              }) => MascotProfileCompanion(
+                id: id,
+                name: name,
+                birthDate: birthDate,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String name,
+                required DateTime birthDate,
+              }) => MascotProfileCompanion.insert(
+                id: id,
+                name: name,
+                birthDate: birthDate,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$MascotProfileTableProcessedTableManager =
+    ProcessedTableManager<
+      _$TotemDatabase,
+      $MascotProfileTable,
+      MascotProfileData,
+      $$MascotProfileTableFilterComposer,
+      $$MascotProfileTableOrderingComposer,
+      $$MascotProfileTableAnnotationComposer,
+      $$MascotProfileTableCreateCompanionBuilder,
+      $$MascotProfileTableUpdateCompanionBuilder,
+      (
+        MascotProfileData,
+        BaseReferences<_$TotemDatabase, $MascotProfileTable, MascotProfileData>,
+      ),
+      MascotProfileData,
+      PrefetchHooks Function()
+    >;
 
 class $TotemDatabaseManager {
   final _$TotemDatabase _db;
@@ -3472,6 +3887,8 @@ class $TotemDatabaseManager {
       $$RssFeedItemsTableTableManager(_db, _db.rssFeedItems);
   $$CalendarEventsTableTableManager get calendarEvents =>
       $$CalendarEventsTableTableManager(_db, _db.calendarEvents);
+  $$MascotProfileTableTableManager get mascotProfile =>
+      $$MascotProfileTableTableManager(_db, _db.mascotProfile);
 }
 
 mixin _$WeatherDaoMixin on DatabaseAccessor<TotemDatabase> {
@@ -3517,4 +3934,16 @@ class CalendarDaoManager {
         _db.attachedDatabase,
         _db.calendarEvents,
       );
+}
+
+mixin _$MascotDaoMixin on DatabaseAccessor<TotemDatabase> {
+  $MascotProfileTable get mascotProfile => attachedDatabase.mascotProfile;
+  MascotDaoManager get managers => MascotDaoManager(this);
+}
+
+class MascotDaoManager {
+  final _$MascotDaoMixin _db;
+  MascotDaoManager(this._db);
+  $$MascotProfileTableTableManager get mascotProfile =>
+      $$MascotProfileTableTableManager(_db.attachedDatabase, _db.mascotProfile);
 }

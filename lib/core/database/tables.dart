@@ -57,3 +57,9 @@ class CalendarEvents extends Table {
     {source, externalId}, // Prevent duplicates per source
   ];
 }
+
+class MascotProfile extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text()();
+  DateTimeColumn get birthDate => dateTime()();
+}

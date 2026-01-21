@@ -3,13 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
+import 'package:totem/core/database/database.dart';
 import 'package:totem/core/di/injection.dart';
 import 'package:totem/core/connectivity/connectivity_cubit.dart';
 import 'package:totem/core/location/presentation/location_cubit.dart';
 import 'package:totem/core/services/preferences_service.dart';
 import 'package:totem/features/onboarding/presentation/cubit/cubit.dart';
-import 'package:totem/features/onboarding/presentation/widgets/progress_indicator.dart';
-import 'package:totem/features/onboarding/presentation/widgets/stage_configuration.dart';
 import 'package:totem/features/onboarding/presentation/widgets/widgets.dart';
 
 class OnboardingPage extends StatelessWidget {
@@ -24,6 +23,7 @@ class OnboardingPage extends StatelessWidget {
             connectivityCubit: getIt<ConnectivityCubit>(),
             prefs: getIt<PreferencesService>(),
             logger: getIt<Logger>(),
+            database: getIt<TotemDatabase>(),
           )..start(),
         ),
         BlocProvider(create: (_) => getIt<LocationCubit>()..initialize()),

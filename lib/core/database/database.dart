@@ -9,6 +9,7 @@ part 'tables.dart';
 part 'daos/weather_dao.dart';
 part 'daos/rss_dao.dart';
 part 'daos/calendar_dao.dart';
+part 'daos/mascot_dao.dart';
 
 @DriftDatabase(
   tables: [
@@ -16,12 +17,9 @@ part 'daos/calendar_dao.dart';
     WeatherForecast,
     RssFeedItems,
     CalendarEvents,
+    MascotProfile,
   ],
-  daos: [
-    WeatherDao,
-    RssDao,
-    CalendarDao,
-  ],
+  daos: [WeatherDao, RssDao, CalendarDao, MascotDao],
 )
 class TotemDatabase extends _$TotemDatabase {
   TotemDatabase() : super(_openConnection());
@@ -31,10 +29,10 @@ class TotemDatabase extends _$TotemDatabase {
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-        onCreate: (Migrator m) async {
-          await m.createAll();
-        },
-      );
+    onCreate: (Migrator m) async {
+      await m.createAll();
+    },
+  );
 }
 
 LazyDatabase _openConnection() {
