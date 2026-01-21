@@ -10,6 +10,7 @@ import 'package:totem/core/location/presentation/location_cubit.dart';
 import 'package:totem/core/services/preferences_service.dart';
 import 'package:totem/features/onboarding/presentation/cubit/cubit.dart';
 import 'package:totem/features/onboarding/presentation/widgets/widgets.dart';
+import 'package:totem/features/weather/presentation/cubit/weather_cubit.dart';
 
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
@@ -27,6 +28,7 @@ class OnboardingPage extends StatelessWidget {
           )..start(),
         ),
         BlocProvider(create: (_) => getIt<LocationCubit>()..initialize()),
+        BlocProvider(create: (_) => getIt<WeatherCubit>()..loadWeather()),
       ],
       child: const _OnboardingView(),
     );

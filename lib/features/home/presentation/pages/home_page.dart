@@ -7,19 +7,33 @@ import 'package:totem/core/connectivity/connectivity_cubit.dart';
 import 'package:totem/core/connectivity/connectivity_manager.dart';
 import 'package:totem/features/home/presentation/widgets/sidebar.dart';
 import 'package:totem/features/home/presentation/widgets/grid_view.dart';
+import 'package:totem/features/weather/presentation/cubit/weather_cubit.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => getIt<WeatherCubit>()
+        ..loadWeather()
+        ..startAutoRefresh(),
+      child: const _HomePageView(),
+    );
+  }
 }
 
-class _HomePageState extends State<HomePage> {
-   late final ConnectivityManager _connectivityManager;
+class _HomePageView extends StatefulWidget {
+  const _HomePageView();
 
+  @override
+  State<_HomePageView> createState() => _HomePageViewState();
+}
 
- @override
+class _HomePageViewState extends State<_HomePageView> {
+  late final ConnectivityManager _connectivityManager;
+
+  @override
   void initState() {
     super.initState();
     _connectivityManager = getIt<ConnectivityManager>();

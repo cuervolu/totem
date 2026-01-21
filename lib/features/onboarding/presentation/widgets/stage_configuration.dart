@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:totem/core/location/models/location_data.dart';
+import 'package:totem/core/location/presentation/location_cubit.dart';
 import 'package:totem/features/location/presentation/widgets/address_search_widget.dart';
 import 'package:totem/features/onboarding/presentation/cubit/onboarding_cubit.dart';
 import 'package:totem/features/onboarding/presentation/cubit/onboarding_state.dart';
@@ -90,7 +91,6 @@ class StageConfiguration extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 16),
-
                   Expanded(
                     child: Card(
                       elevation: 0,
@@ -99,6 +99,7 @@ class StageConfiguration extends StatelessWidget {
                         padding: const EdgeInsets.all(12),
                         child: AddressSearchWidget(
                           onLocationSelected: (LocationData loc) {
+                            context.read<LocationCubit>().selectLocation(loc);
                             context
                                 .read<OnboardingCubit>()
                                 .markLocationConfigured();

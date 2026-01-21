@@ -11,6 +11,8 @@ import 'package:totem/core/location/services/nominatim_service.dart';
 import 'package:totem/core/router/app_router.dart';
 import 'package:logger/logger.dart';
 import 'package:totem/core/services/preferences_service.dart';
+import 'package:totem/core/weather/open_meteo_service.dart';
+import 'package:totem/features/weather/presentation/cubit/weather_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -77,6 +79,23 @@ Future<void> setupDependencies() async {
     () => LocationCubit(
       detector: getIt<LocationDetectorService>(),
       prefs: getIt<PreferencesService>(),
+      logger: getIt<Logger>(),
+    ),
+  );
+
+   // OpenMeteoService
+  getIt.registerLazySingleton<OpenMeteoService>(
+    () => OpenMeteoService(
+      weatherDao: getIt<WeatherDao>(),
+      prefs: getIt<PreferencesService>(),
+      logger: getIt<Logger>(),
+    ),
+  );
+
+  // WeatherCubit
+  getIt.registerFactory<WeatherCubit>(
+    () => WeatherCubit(
+      service: getIt<OpenMeteoService>(),
       logger: getIt<Logger>(),
     ),
   );

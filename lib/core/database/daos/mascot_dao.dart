@@ -9,14 +9,24 @@ class MascotDao extends DatabaseAccessor<TotemDatabase> with _$MascotDaoMixin {
   }
 
   Future<void> createMascot(String name) async {
-    await into(mascotProfile).insert(
-      MascotProfileCompanion.insert(name: name, birthDate: DateTime.now()),
-    );
+    final existing = await getMascot();
+
+    if (existing != null) {
+      await (update(mascotProfile)..where((t) => t.id.equals(existing.id)))
+          .write(MascotProfileCompanion(name: Value(name)));
+    } else {
+      await into(mascotProfile).insert(
+        MascotProfileCompanion.insert(name: name, birthDate: DateTime.now()),
+      );
+    }
   }
 
   Future<void> updateMascotName(String newName) async {
-    await (update(mascotProfile)..where((t) => t.id.equals(1))).write(
-      MascotProfileCompanion(name: Value(newName)),
-    );
+    final mascot = await getMascot();
+    if (mascot != null) {
+      await (update(mascotProfile)..where((t) => t.id.equals(mascot.id))).write(
+        MascotProfileCompanion(name: Value(newName)),
+      );
+    }
   }
 }
