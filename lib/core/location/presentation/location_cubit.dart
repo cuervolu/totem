@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
+import 'package:totem/core/database/database.dart';
+import 'package:totem/core/di/injection.dart';
 import 'package:totem/core/location/models/location_data.dart';
 import 'package:totem/core/location/models/location_detection_result.dart';
 import 'package:totem/core/location/presentation/location_state.dart';
@@ -54,7 +56,7 @@ class LocationCubit extends Cubit<LocationState> {
         switch (type) {
           case LocationErrorType.permissionPermanentlyDenied:
             emit(
-              LocationFailure(  
+              LocationFailure(
                 message:
                     'Permiso denegado. Habilítalo en configuración o busca manualmente.',
                 needsManualSearch: true,
@@ -94,6 +96,14 @@ class LocationCubit extends Cubit<LocationState> {
 
   Future<void> updateLocation(LocationData location) async {
     await _saveLocation(location);
+    try {
+      final weatherDao = getIt<WeatherDao>();
+      await weatherDao.clearAllWeatherCache();
+      _logger.i('Weather cache cleared after location update');
+    } catch (e) {
+      _logger.w('Failed to clear weather cache', error: e);
+    }
+
     emit(LocationReady(location));
   }
 

@@ -36,18 +36,28 @@ class OpenMeteoService {
   Future<WeatherCacheData?> getCurrentWeather({
     bool forceRefresh = false,
   }) async {
-    if (!forceRefresh) {
-      final cached = await _weatherDao.getCurrentWeather();
-      if (cached != null) {
-        _logger.d('Returning cached weather');
-        return cached;
-      }
-    }
-
     final location = _prefs.getLocation();
     if (location == null) {
       _logger.w('No location configured');
       return null;
+    }
+    if (!forceRefresh) {
+      final cached = await _weatherDao.getCurrentWeather();
+      if (cached != null) {
+        const tolerance = 0.01; // ~1km
+        final latMatch =
+            (cached.latitude - location.latitude).abs() < tolerance;
+        final lonMatch =
+            (cached.longitude - location.longitude).abs() < tolerance;
+
+        if (latMatch && lonMatch) {
+          _logger.d('Returning cached weather for current location');
+          return cached;
+        } else {
+          _logger.w('Location changed, invalidating cache');
+          await _weatherDao.clearAllWeatherCache();
+        }
+      }
     }
 
     try {
@@ -74,6 +84,8 @@ class OpenMeteoService {
       final condition = WeatherCodeMapper.getCondition(current.weatherCode);
 
       final weatherCompanion = WeatherCacheCompanion(
+        latitude: drift.Value(location.latitude),
+        longitude: drift.Value(location.longitude),
         currentTemp: drift.Value(current.temperature),
         feelsLike: drift.Value(current.apparentTemperature),
         weatherCode: drift.Value(current.weatherCode),

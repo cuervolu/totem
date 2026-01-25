@@ -2,11 +2,14 @@ part of 'database.dart';
 
 class WeatherCache extends Table {
   IntColumn get id => integer().autoIncrement()();
+
+  RealColumn get latitude => real()();
+  RealColumn get longitude => real()();
+
   RealColumn get currentTemp => real()();
   RealColumn get feelsLike => real()();
   IntColumn get weatherCode => integer()(); // WMO code
-  TextColumn get condition =>
-      text()(); // "sunny", "rain" 
+  TextColumn get condition => text()(); // "sunny", "rain"
   IntColumn get humidity => integer()();
   IntColumn get windSpeed => integer().nullable()();
   IntColumn get uvIndex => integer().nullable()();
@@ -31,7 +34,7 @@ class RssFeedItems extends Table {
   TextColumn get title => text()();
   TextColumn get link => text()();
   TextColumn get summary => text().nullable()();
-  TextColumn get imageUrl => text().nullable()(); 
+  TextColumn get imageUrl => text().nullable()();
   DateTimeColumn get publishedAt => dateTime()();
   BoolColumn get isRead => boolean().withDefault(const Constant(false))();
   DateTimeColumn get cachedAt => dateTime()();

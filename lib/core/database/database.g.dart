@@ -22,6 +22,28 @@ class $WeatherCacheTable extends WeatherCache
       'PRIMARY KEY AUTOINCREMENT',
     ),
   );
+  static const VerificationMeta _latitudeMeta = const VerificationMeta(
+    'latitude',
+  );
+  @override
+  late final GeneratedColumn<double> latitude = GeneratedColumn<double>(
+    'latitude',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _longitudeMeta = const VerificationMeta(
+    'longitude',
+  );
+  @override
+  late final GeneratedColumn<double> longitude = GeneratedColumn<double>(
+    'longitude',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _currentTempMeta = const VerificationMeta(
     'currentTemp',
   );
@@ -135,6 +157,8 @@ class $WeatherCacheTable extends WeatherCache
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    latitude,
+    longitude,
     currentTemp,
     feelsLike,
     weatherCode,
@@ -160,6 +184,22 @@ class $WeatherCacheTable extends WeatherCache
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('latitude')) {
+      context.handle(
+        _latitudeMeta,
+        latitude.isAcceptableOrUnknown(data['latitude']!, _latitudeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_latitudeMeta);
+    }
+    if (data.containsKey('longitude')) {
+      context.handle(
+        _longitudeMeta,
+        longitude.isAcceptableOrUnknown(data['longitude']!, _longitudeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_longitudeMeta);
     }
     if (data.containsKey('current_temp')) {
       context.handle(
@@ -254,6 +294,14 @@ class $WeatherCacheTable extends WeatherCache
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
+      latitude: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}latitude'],
+      )!,
+      longitude: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}longitude'],
+      )!,
       currentTemp: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}current_temp'],
@@ -306,6 +354,8 @@ class $WeatherCacheTable extends WeatherCache
 class WeatherCacheData extends DataClass
     implements Insertable<WeatherCacheData> {
   final int id;
+  final double latitude;
+  final double longitude;
   final double currentTemp;
   final double feelsLike;
   final int weatherCode;
@@ -318,6 +368,8 @@ class WeatherCacheData extends DataClass
   final DateTime expiresAt;
   const WeatherCacheData({
     required this.id,
+    required this.latitude,
+    required this.longitude,
     required this.currentTemp,
     required this.feelsLike,
     required this.weatherCode,
@@ -333,6 +385,8 @@ class WeatherCacheData extends DataClass
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['latitude'] = Variable<double>(latitude);
+    map['longitude'] = Variable<double>(longitude);
     map['current_temp'] = Variable<double>(currentTemp);
     map['feels_like'] = Variable<double>(feelsLike);
     map['weather_code'] = Variable<int>(weatherCode);
@@ -355,6 +409,8 @@ class WeatherCacheData extends DataClass
   WeatherCacheCompanion toCompanion(bool nullToAbsent) {
     return WeatherCacheCompanion(
       id: Value(id),
+      latitude: Value(latitude),
+      longitude: Value(longitude),
       currentTemp: Value(currentTemp),
       feelsLike: Value(feelsLike),
       weatherCode: Value(weatherCode),
@@ -381,6 +437,8 @@ class WeatherCacheData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return WeatherCacheData(
       id: serializer.fromJson<int>(json['id']),
+      latitude: serializer.fromJson<double>(json['latitude']),
+      longitude: serializer.fromJson<double>(json['longitude']),
       currentTemp: serializer.fromJson<double>(json['currentTemp']),
       feelsLike: serializer.fromJson<double>(json['feelsLike']),
       weatherCode: serializer.fromJson<int>(json['weatherCode']),
@@ -398,6 +456,8 @@ class WeatherCacheData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'latitude': serializer.toJson<double>(latitude),
+      'longitude': serializer.toJson<double>(longitude),
       'currentTemp': serializer.toJson<double>(currentTemp),
       'feelsLike': serializer.toJson<double>(feelsLike),
       'weatherCode': serializer.toJson<int>(weatherCode),
@@ -413,6 +473,8 @@ class WeatherCacheData extends DataClass
 
   WeatherCacheData copyWith({
     int? id,
+    double? latitude,
+    double? longitude,
     double? currentTemp,
     double? feelsLike,
     int? weatherCode,
@@ -425,6 +487,8 @@ class WeatherCacheData extends DataClass
     DateTime? expiresAt,
   }) => WeatherCacheData(
     id: id ?? this.id,
+    latitude: latitude ?? this.latitude,
+    longitude: longitude ?? this.longitude,
     currentTemp: currentTemp ?? this.currentTemp,
     feelsLike: feelsLike ?? this.feelsLike,
     weatherCode: weatherCode ?? this.weatherCode,
@@ -439,6 +503,8 @@ class WeatherCacheData extends DataClass
   WeatherCacheData copyWithCompanion(WeatherCacheCompanion data) {
     return WeatherCacheData(
       id: data.id.present ? data.id.value : this.id,
+      latitude: data.latitude.present ? data.latitude.value : this.latitude,
+      longitude: data.longitude.present ? data.longitude.value : this.longitude,
       currentTemp: data.currentTemp.present
           ? data.currentTemp.value
           : this.currentTemp,
@@ -462,6 +528,8 @@ class WeatherCacheData extends DataClass
   String toString() {
     return (StringBuffer('WeatherCacheData(')
           ..write('id: $id, ')
+          ..write('latitude: $latitude, ')
+          ..write('longitude: $longitude, ')
           ..write('currentTemp: $currentTemp, ')
           ..write('feelsLike: $feelsLike, ')
           ..write('weatherCode: $weatherCode, ')
@@ -479,6 +547,8 @@ class WeatherCacheData extends DataClass
   @override
   int get hashCode => Object.hash(
     id,
+    latitude,
+    longitude,
     currentTemp,
     feelsLike,
     weatherCode,
@@ -495,6 +565,8 @@ class WeatherCacheData extends DataClass
       identical(this, other) ||
       (other is WeatherCacheData &&
           other.id == this.id &&
+          other.latitude == this.latitude &&
+          other.longitude == this.longitude &&
           other.currentTemp == this.currentTemp &&
           other.feelsLike == this.feelsLike &&
           other.weatherCode == this.weatherCode &&
@@ -509,6 +581,8 @@ class WeatherCacheData extends DataClass
 
 class WeatherCacheCompanion extends UpdateCompanion<WeatherCacheData> {
   final Value<int> id;
+  final Value<double> latitude;
+  final Value<double> longitude;
   final Value<double> currentTemp;
   final Value<double> feelsLike;
   final Value<int> weatherCode;
@@ -521,6 +595,8 @@ class WeatherCacheCompanion extends UpdateCompanion<WeatherCacheData> {
   final Value<DateTime> expiresAt;
   const WeatherCacheCompanion({
     this.id = const Value.absent(),
+    this.latitude = const Value.absent(),
+    this.longitude = const Value.absent(),
     this.currentTemp = const Value.absent(),
     this.feelsLike = const Value.absent(),
     this.weatherCode = const Value.absent(),
@@ -534,6 +610,8 @@ class WeatherCacheCompanion extends UpdateCompanion<WeatherCacheData> {
   });
   WeatherCacheCompanion.insert({
     this.id = const Value.absent(),
+    required double latitude,
+    required double longitude,
     required double currentTemp,
     required double feelsLike,
     required int weatherCode,
@@ -544,7 +622,9 @@ class WeatherCacheCompanion extends UpdateCompanion<WeatherCacheData> {
     this.airQuality = const Value.absent(),
     required DateTime cachedAt,
     required DateTime expiresAt,
-  }) : currentTemp = Value(currentTemp),
+  }) : latitude = Value(latitude),
+       longitude = Value(longitude),
+       currentTemp = Value(currentTemp),
        feelsLike = Value(feelsLike),
        weatherCode = Value(weatherCode),
        condition = Value(condition),
@@ -553,6 +633,8 @@ class WeatherCacheCompanion extends UpdateCompanion<WeatherCacheData> {
        expiresAt = Value(expiresAt);
   static Insertable<WeatherCacheData> custom({
     Expression<int>? id,
+    Expression<double>? latitude,
+    Expression<double>? longitude,
     Expression<double>? currentTemp,
     Expression<double>? feelsLike,
     Expression<int>? weatherCode,
@@ -566,6 +648,8 @@ class WeatherCacheCompanion extends UpdateCompanion<WeatherCacheData> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (latitude != null) 'latitude': latitude,
+      if (longitude != null) 'longitude': longitude,
       if (currentTemp != null) 'current_temp': currentTemp,
       if (feelsLike != null) 'feels_like': feelsLike,
       if (weatherCode != null) 'weather_code': weatherCode,
@@ -581,6 +665,8 @@ class WeatherCacheCompanion extends UpdateCompanion<WeatherCacheData> {
 
   WeatherCacheCompanion copyWith({
     Value<int>? id,
+    Value<double>? latitude,
+    Value<double>? longitude,
     Value<double>? currentTemp,
     Value<double>? feelsLike,
     Value<int>? weatherCode,
@@ -594,6 +680,8 @@ class WeatherCacheCompanion extends UpdateCompanion<WeatherCacheData> {
   }) {
     return WeatherCacheCompanion(
       id: id ?? this.id,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
       currentTemp: currentTemp ?? this.currentTemp,
       feelsLike: feelsLike ?? this.feelsLike,
       weatherCode: weatherCode ?? this.weatherCode,
@@ -612,6 +700,12 @@ class WeatherCacheCompanion extends UpdateCompanion<WeatherCacheData> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (latitude.present) {
+      map['latitude'] = Variable<double>(latitude.value);
+    }
+    if (longitude.present) {
+      map['longitude'] = Variable<double>(longitude.value);
     }
     if (currentTemp.present) {
       map['current_temp'] = Variable<double>(currentTemp.value);
@@ -650,6 +744,8 @@ class WeatherCacheCompanion extends UpdateCompanion<WeatherCacheData> {
   String toString() {
     return (StringBuffer('WeatherCacheCompanion(')
           ..write('id: $id, ')
+          ..write('latitude: $latitude, ')
+          ..write('longitude: $longitude, ')
           ..write('currentTemp: $currentTemp, ')
           ..write('feelsLike: $feelsLike, ')
           ..write('weatherCode: $weatherCode, ')
@@ -2577,6 +2673,8 @@ abstract class _$TotemDatabase extends GeneratedDatabase {
 typedef $$WeatherCacheTableCreateCompanionBuilder =
     WeatherCacheCompanion Function({
       Value<int> id,
+      required double latitude,
+      required double longitude,
       required double currentTemp,
       required double feelsLike,
       required int weatherCode,
@@ -2591,6 +2689,8 @@ typedef $$WeatherCacheTableCreateCompanionBuilder =
 typedef $$WeatherCacheTableUpdateCompanionBuilder =
     WeatherCacheCompanion Function({
       Value<int> id,
+      Value<double> latitude,
+      Value<double> longitude,
       Value<double> currentTemp,
       Value<double> feelsLike,
       Value<int> weatherCode,
@@ -2614,6 +2714,16 @@ class $$WeatherCacheTableFilterComposer
   });
   ColumnFilters<int> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get latitude => $composableBuilder(
+    column: $table.latitude,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get longitude => $composableBuilder(
+    column: $table.longitude,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2682,6 +2792,16 @@ class $$WeatherCacheTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<double> get latitude => $composableBuilder(
+    column: $table.latitude,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get longitude => $composableBuilder(
+    column: $table.longitude,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<double> get currentTemp => $composableBuilder(
     column: $table.currentTemp,
     builder: (column) => ColumnOrderings(column),
@@ -2744,6 +2864,12 @@ class $$WeatherCacheTableAnnotationComposer
   });
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<double> get latitude =>
+      $composableBuilder(column: $table.latitude, builder: (column) => column);
+
+  GeneratedColumn<double> get longitude =>
+      $composableBuilder(column: $table.longitude, builder: (column) => column);
 
   GeneratedColumn<double> get currentTemp => $composableBuilder(
     column: $table.currentTemp,
@@ -2818,6 +2944,8 @@ class $$WeatherCacheTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
+                Value<double> latitude = const Value.absent(),
+                Value<double> longitude = const Value.absent(),
                 Value<double> currentTemp = const Value.absent(),
                 Value<double> feelsLike = const Value.absent(),
                 Value<int> weatherCode = const Value.absent(),
@@ -2830,6 +2958,8 @@ class $$WeatherCacheTableTableManager
                 Value<DateTime> expiresAt = const Value.absent(),
               }) => WeatherCacheCompanion(
                 id: id,
+                latitude: latitude,
+                longitude: longitude,
                 currentTemp: currentTemp,
                 feelsLike: feelsLike,
                 weatherCode: weatherCode,
@@ -2844,6 +2974,8 @@ class $$WeatherCacheTableTableManager
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
+                required double latitude,
+                required double longitude,
                 required double currentTemp,
                 required double feelsLike,
                 required int weatherCode,
@@ -2856,6 +2988,8 @@ class $$WeatherCacheTableTableManager
                 required DateTime expiresAt,
               }) => WeatherCacheCompanion.insert(
                 id: id,
+                latitude: latitude,
+                longitude: longitude,
                 currentTemp: currentTemp,
                 feelsLike: feelsLike,
                 weatherCode: weatherCode,

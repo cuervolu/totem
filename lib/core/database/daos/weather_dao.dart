@@ -18,6 +18,11 @@ class WeatherDao extends DatabaseAccessor<TotemDatabase>
     await into(weatherCache).insert(weather);
   }
 
+  Future<void> clearAllWeatherCache() async {
+    await delete(weatherCache).go();
+    await delete(weatherForecast).go();
+  }
+
   Future<List<WeatherForecastData>> getForecast({int hoursAhead = 12}) async {
     final now = DateTime.now();
     final cutoff = now.add(Duration(hours: hoursAhead));
