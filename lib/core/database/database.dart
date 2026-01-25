@@ -37,7 +37,7 @@ class TotemDatabase extends _$TotemDatabase {
 
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
-    final dbFolder = await getApplicationDocumentsDirectory();
+    final dbFolder = await getApplicationSupportDirectory();
     final file = File(p.join(dbFolder.path, 'totem.db'));
     return NativeDatabase(file);
   });
